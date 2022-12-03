@@ -1,24 +1,77 @@
+# import logging
+#
+# import azure.functions as func
+#
+#
+# def main(req: func.HttpRequest) -> func.HttpResponse:
+#     logging.info('Python HTTP trigger function processed a request.')
+#
+#     name = req.params.get('name')
+#     if not name:
+#         try:
+#             req_body = req.get_json()
+#         except ValueError:
+#             pass
+#         else:
+#             name = req_body.get('name')
+#
+#     if name:
+#         return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+#     else:
+#         return func.HttpResponse(
+#              "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+#              status_code=200
+#         )
+#
+#
+#
+#
+
+
 import logging
-
 import azure.functions as func
-
+import os
+import pyodbc
+import struct
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
+    server="lockey-server.database.windows.net"
+    database="LockeyDB"
+    driver="{ODBC Driver 17 for SQL Server}"
+    query="SELECT * FROM dbo.users"
+    # Optional to use username and password for authentication
+    # username = 'name'
+    # password = 'pass'
+    db_token = ''
+    connection_string = 'DRIVER='+driver+';SERVER='+server+';DATABASE='+database
+    #When MSI is enabled
+    if os.getenv("MSI_SECRET"):
+        conn = pyodbc.connect(connection_string+';Authentication=ActiveDirectoryMsi')
 
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
-
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+    #Used when run from local
     else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
+        SQL_COPT_SS_ACCESS_TOKEN = 1256
+
+        exptoken = b''
+        for i in bytes(db_token, "UTF-8"):
+            exptoken += bytes({i})
+            exptoken += bytes(1)
+
+        tokenstruct = struct.pack("=i", len(exptoken)) + exptoken
+        conn = pyodbc.connect(connection_string, attrs_before = { SQL_COPT_SS_ACCESS_TOKEN:tokenstruct })
+        # Uncomment below line when use username and password for authentication
+        # conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+
+    cursor = conn.cursor()
+    cursor.execute(query)
+    row = cursor.fetchone()
+
+    while row:
+        print(row[0])
+        row = cursor.fetchone()
+
+    return func.HttpResponse(
+            'Success',
+            status_code=200
+    )
