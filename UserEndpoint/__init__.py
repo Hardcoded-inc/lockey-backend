@@ -51,6 +51,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         )
         user = cursor.fetchone()
         return func.HttpResponse(f'User with ID {user_id}: {user}')
+    elif action == 'read_all':
+        # Select a user from the SQL database
+        cursor.execute(
+            'SELECT * FROM users',
+        )
+        users = cursor.fetchall()
+        return func.HttpResponse(f'Users {users}')
     elif action == 'update':
         # Update a user in the SQL database
         cursor.execute(
