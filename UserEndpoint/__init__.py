@@ -1,5 +1,7 @@
 import azure.functions as func
 import pyodbc
+from dotenv import dotenv_values
+
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
 
@@ -7,7 +9,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     print(req.params)
 
     # Set up connection to SQL database
-    # credentials here...
+    env_values = dotenv_values()
+
+    server = env_values["SERVER"]
+    driver = env_values["DRIVER"]
+    database = env_values["DATABASE"]
+    username = env_values['DB_USERNAME']
+    password = env_values['DB_PASSWORD']
 
     connection_string = 'DRIVER='+driver+';' \
                         'SERVER='+server+';' \

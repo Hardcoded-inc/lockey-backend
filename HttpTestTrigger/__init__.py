@@ -61,9 +61,16 @@ import struct
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    # credentials here...
+    env_values = dotenv_values()
+
+    server = env_values["SERVER"]
+    driver = env_values["DRIVER"]
+    database = env_values["DATABASE"]
+    username = env_values['DB_USERNAME']
+    password = env_values['DB_PASSWORD']
 
     connection_string = 'DRIVER='+driver+';SERVER='+server+';DATABASE='+database
+
     #When MSI is enabled
     if os.getenv("MSI_SECRET"):
         conn = pyodbc.connect(connection_string+';Authentication=ActiveDirectoryMsi')
