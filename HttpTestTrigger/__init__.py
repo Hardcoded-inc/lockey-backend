@@ -28,7 +28,7 @@
 # import pyodbc
 # import sqlalchemy as sa
 # from sqlalchemy import create_engine
-# from urllib.parse import quote_plus 
+# from urllib.parse import quote_plus
 # import azure.functions as func
 
 # def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -60,6 +60,8 @@ import struct
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
+
+    # credentials here...
 
     connection_string = 'DRIVER='+driver+';SERVER='+server+';DATABASE='+database
     #When MSI is enabled
