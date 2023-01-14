@@ -1,5 +1,7 @@
 import azure.functions as func
 import pyodbc
+from dotenv import dotenv_values
+import json
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -54,7 +56,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             'SELECT * FROM users',
         )
         users = cursor.fetchall()
-        return func.HttpResponse(f'Users {users}')
+        results = [tuple(row) for row in users]
+        print(results)
+
+        return func.HttpResponse(json.dumps(results, default=str), mimetype="application/json")
     elif action == 'update':
         # Update a user in the SQL database
         cursor.execute(
