@@ -2,14 +2,12 @@
   "scriptFile": "__init__.py",
   "bindings": [
     {
-      "authLevel": "admin",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "get",
-        "post"
-      ]
+      "methods": ["post"],
+      "route": "doors"
     },
     {
       "type": "http",
