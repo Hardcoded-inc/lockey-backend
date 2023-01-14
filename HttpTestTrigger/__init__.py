@@ -61,13 +61,12 @@ import struct
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    env_values = dotenv_values()
 
-    server = env_values["SERVER"]
-    driver = env_values["DRIVER"]
-    database = env_values["DATABASE"]
-    username = env_values['DB_USERNAME']
-    password = env_values['DB_PASSWORD']
+    server = os.environ.get("SERVER")
+    driver = os.environ.get("DRIVER")
+    database = os.environ.get("DATABASE")
+    username = os.environ.get('DB_USERNAME')
+    password = os.environ.get('DB_PASSWORD')
 
     connection_string = 'DRIVER='+driver+';SERVER='+server+';DATABASE='+database
 
@@ -89,6 +88,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # Uncomment below line when use username and password for authentication
         conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
+    query = "SELECT * FROM users;"
     cursor = conn.cursor()
     cursor.execute(query)
     row = cursor.fetchone()

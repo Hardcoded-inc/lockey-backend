@@ -9,14 +9,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     print("-------")
     print(req.params)
 
-    # Set up connection to SQL database
-    env_values = dotenv_values()
 
-    server = env_values["SERVER"]
-    driver = env_values["DRIVER"]
-    database = env_values["DATABASE"]
-    username = env_values['DB_USERNAME']
-    password = env_values['DB_PASSWORD']
+    server = os.environ.get("SERVER")
+    driver = os.environ.get("DRIVER")
+    database = os.environ.get("DATABASE")
+    username = os.environ.get('DB_USERNAME')
+    password = os.environ.get('DB_PASSWORD')
 
     connection_string = 'DRIVER='+driver+';' \
                         'SERVER='+server+';' \
