@@ -1,42 +1,41 @@
 import logging
+from shared import db
+from shared.validate import validate
 import azure.functions as func
-import pyodbc
-import os
+import json
 
 
+FIELDS = {"name"}
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("Create Door function processed a request.")
 
-    server = os.environ.get("SERVER")
-    driver = os.environ.get("DRIVER")
-    database = os.environ.get("DATABASE")
-    username = os.environ.get('DB_USERNAME')
-    password = os.environ.get('DB_PASSWORD')
+    return create_door(req.get_json())
 
-    connection_string = 'DRIVER='+driver+';' \
-                        'SERVER='+server+';' \
-                        'DATABASE='+database+';' \
-                        'UID='+username+';' \
-                        'PWD='+ password
 
-    connection = pyodbc.connect(connection_string)
+def create_door(body: bytes) -> func.HttpResponse:
+    connection = db.get_connection()
     cursor = connection.cursor()
 
-    # Extract request parameters
-    body = req.get_json()
-    name = body['name']
+    if body:
+        try:
+            query = 'INSERT INTO dbo.doors (name) VALUES (?);'
+            validated = validate(body["door"], FIELDS)
+            params = (validated["name"])
 
-    query = 'INSERT INTO dbo.doors (name) VALUES (?);'
-    params = (name)
+            cursor.execute(query, params)
+            connection.commit()
 
-    cursor.execute(query, params)
-    connection.commit()
+            return func.HttpResponse(f"Door created successfully.")
 
-    logging.warning(cursor.fetchall())
+        except Exception as e:
+            logging.error(e)
+            pass
+
+    return func.HttpResponse(
+            "Bad data",
+            status_code=400
+    )
 
 
-    doors_id = cursor.fetchone()[0]
-    logging.warning("-------")
-    logging.warning(doors_id)
 
-    return func.HttpResponse(f'Doors with ID {doors_id} created successfully.')
