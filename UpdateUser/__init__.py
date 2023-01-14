@@ -3,6 +3,8 @@ from shared import db
 import json
 import azure.functions as func
 
+UPDATEABLE_COLUMNS = ['username', 'password', 'is_admin']
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
@@ -25,7 +27,8 @@ def build_query(user: dict, id: int) -> str:
     updates = ''
 
     for col, value in user.items():
-        updates = updates + "{} = ?, ".format(col, value)
+        if (col in UPDATEABLE_COLUMNS):
+            updates = updates + "{} = ?, ".format(col)
     
     updates = updates[:-2]
 
