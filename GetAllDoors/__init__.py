@@ -10,9 +10,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     conn = db.get_connection();
     cursor = conn.cursor();
 
-    cursor.execute(
-            'SELECT * FROM doors',
-        )
+    cursor.execute('SELECT * FROM doors')
     doors = cursor.fetchall()
     results = [tuple(row) for row in doors]
 
