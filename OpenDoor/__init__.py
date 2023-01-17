@@ -26,7 +26,7 @@ def open_door(id: int) -> func.HttpResponse:
     elif not door[0]:
         cursor.execute('UPDATE dbo.doors SET is_open = \'True\' WHERE id = ?', id)
         connection.commit()
-        # TODO: Set timer and lock door again after 10 sek
+        # TODO: Set timer and lock door again after 10 sek or sth
         return func.HttpResponse(f"Door openned successfully.")
 
     else:
