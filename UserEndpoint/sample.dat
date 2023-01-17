@@ -1,7 +1,0 @@
-{
-    "name": "Azure",
-    "params": {
-        "action": "read",
-        "user_id": "1"
-        }
-}
