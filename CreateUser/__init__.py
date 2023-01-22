@@ -59,3 +59,5 @@ def generate_password_hash(password):
     encoded_password = password.encode('UTF-8')
     password_hash = bcrypt.hashpw(encoded_password, bcrypt.gensalt())
     return password_hash
+
+

@@ -1,5 +1,5 @@
 import logging
-from shared import db
+from shared import db, jwt
 import azure.functions as func
 import json
 from typing import Optional
@@ -8,9 +8,7 @@ import bcrypt
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python LogIn function processed a request.')
-
     return log_in_user(req.get_json())
-
 
 
 def log_in_user(body: bytes) -> func.HttpResponse:
@@ -35,9 +33,6 @@ def log_in_user(body: bytes) -> func.HttpResponse:
 
     # 3. Get password
     (user_username, user_pwd_hash, user_password) = user
-    logging.warn(user_password)
-    logging.warn(user_pwd_hash)
-
 
     # 4. Check password
     encoded_passwd = passwd.encode('UTF-8')
@@ -45,12 +40,9 @@ def log_in_user(body: bytes) -> func.HttpResponse:
         return func.HttpResponse(json.dumps({"error": "Invalid password"}), status_code=401, mimetype="application/json")
 
 
-    # 6. Return Json Web Token
-    jwt = "dupa"
-    return func.HttpResponse(body=json.dumps({"jwt": jwt}), status_code=200, mimetype="application/json")
+    # 5. Return Json Web Token
+    data = {"test": "dupa"}
+    token = jwt.create(data)
+    return func.HttpResponse(body=json.dumps({"jwt": token}), status_code=200, mimetype="application/json")
 
 
-
-
-    # Save pwd like that:
-    # hashed = bcrypt.hashpw(password, bcrypt.gensalt())
