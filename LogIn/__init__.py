@@ -25,8 +25,7 @@ def log_in_user(body: bytes) -> func.HttpResponse:
 
     # 2. Find user in DB (Return error if not found)
 
-    # TODO: Change col name to password_hash
-    cursor.execute('SELECT username, password FROM dbo.users WHERE username=?', username)
+    cursor.execute('SELECT username, password_hash, password FROM dbo.users WHERE username=?', username)
     user = cursor.fetchone()
     logging.warn(user)
 
@@ -35,12 +34,8 @@ def log_in_user(body: bytes) -> func.HttpResponse:
 
 
     # 3. Get password
-    # (user_username, user_pwd_hash) = user
-
-    # TODO: Replace pwd hashing with extracting pwd hash dtraight from db
-    (user_username, pwd) = user
-    encoded_pwd = pwd.encode('UTF-8')
-    user_pwd_hash = bcrypt.hashpw(encoded_pwd, bcrypt.gensalt())
+    (user_username, user_pwd_hash, user_password) = user
+    logging.warn(user_password)
     logging.warn(user_pwd_hash)
 
 
