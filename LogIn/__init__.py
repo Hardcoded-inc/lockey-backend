@@ -25,8 +25,7 @@ def log_in_user(body: bytes, domain: str) -> func.HttpResponse:
 
 
     # 2. Find user in DB (Return error if not found)
-
-    cursor.execute('SELECT username, is_admin, password_hash, password FROM dbo.users WHERE username=?', username)
+    cursor.execute('SELECT id, username, is_admin, password_hash, password FROM dbo.users WHERE username=?', username)
     user = cursor.fetchone()
     logging.warn(user)
 
@@ -35,7 +34,7 @@ def log_in_user(body: bytes, domain: str) -> func.HttpResponse:
 
 
     # 3. Get password
-    (user_username, user_is_admin, user_pwd_hash, user_password) = user
+    (user_id, user_username, user_is_admin, user_pwd_hash, user_password) = user
 
 
     # 4. Check password
@@ -45,7 +44,7 @@ def log_in_user(body: bytes, domain: str) -> func.HttpResponse:
 
 
     # 5. Return Json Web Token
-    data = { "username": user_username, "user_is_admin": user_is_admin }
+    data = { "id": user_id, "username": user_username, "is_admin": user_is_admin }
     token = jwt.create(data)
 
 

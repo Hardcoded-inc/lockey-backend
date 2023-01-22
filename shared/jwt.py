@@ -1,3 +1,4 @@
+import logging
 import os
 import jwt
 
@@ -6,7 +7,14 @@ def create(data):
     encoded = jwt.encode(data, jwt_secret, algorithm="HS256")
     return encoded
 
-def decode(jwt):
+def decode(data):
     jwt_secret = os.environ.get("JWT_SECRET")
-    jwt.decode(jwt, jwt_secret, algorithms=["HS256"])
-    return decoded
+
+    try:
+        decoded = jwt.decode(data, jwt_secret, algorithms=["HS256"])
+        return decoded
+
+    except Exception as e:
+        logging.error(e)
+        return None
+
