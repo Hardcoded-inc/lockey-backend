@@ -7,7 +7,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["delete"],
-      "route": "users/{id}"
+      "route": "doors/{id}"
     },
     {
       "type": "http",
