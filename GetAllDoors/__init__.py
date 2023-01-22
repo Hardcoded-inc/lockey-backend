@@ -1,5 +1,5 @@
 import logging
-from shared import db
+from shared import db, jwt, cookie
 import azure.functions as func
 import json
 
