@@ -6,7 +6,7 @@ from typing import Optional
 import bcrypt
 
 
-USER_FIELDS = {"username", "password", "isAdmin"}
+USER_FIELDS = {"username", "password", "is_admin"}
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Python HTTP trigger function processed a request.")
@@ -19,26 +19,18 @@ def create_user(body: bytes) -> func.HttpResponse:
     user = parse_user_data(body)
 
     if user:
-        try:
-            password_hash = generate_password_hash(user["password"])
-            params = (user["username"], user["password"], password_hash, user["isAdmin"])
+        password_hash = generate_password_hash(user["password"])
+        params = (user["username"], user["password"], password_hash, user["is_admin"])
 
-            # Insert a new user into the SQL database
-            cursor.execute(
-                "INSERT INTO dbo.users (username, password, password_hash, is_admin) "
-                "VALUES (?, ?, ?)",
-                params
-            )
-            connection.commit()
-            return func.HttpResponse(f"User created successfully.")
-        except Exception as e:
-            logging.error(e)
-            pass
-
-    return func.HttpResponse(
-            "Bad data",
-            status_code=400
-    )
+        # Insert a new user into the SQL database
+        cursor.execute(
+            "INSERT INTO dbo.users (username, password, password_hash, is_admin) "
+            "VALUES (?, ?, ?, ?)",
+            params
+        )
+        connection.commit()
+        return func.HttpResponse(f"User created successfully.")
+       
 
 def parse_user_data(body: bytes) -> Optional[dict]:
     try:
@@ -51,6 +43,7 @@ def parse_user_data(body: bytes) -> Optional[dict]:
 def validate_user_data(body_dict: dict) -> Optional[dict]:
     if ("user" in body_dict):
         user = body_dict["user"]
+        logging.warning(user)
 
         if (USER_FIELDS <= user.keys()):
             return user;
