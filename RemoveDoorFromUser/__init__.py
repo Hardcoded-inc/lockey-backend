@@ -1,6 +1,8 @@
 import logging
-
+from shared import db
+from shared.validate import validate
 import azure.functions as func
+import json
 
 
 FIELDS = {"user_id", "door_id"}
@@ -8,23 +10,23 @@ FIELDS = {"user_id", "door_id"}
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python AssignDoorToUser function processed a request.')
 
-    return assign_door_to_user(req.get_json())
+    return remove_door_from_user(req.get_json())
 
 
-def assign_door_to_user(body):
+def remove_door_from_user(body):
     connection = db.get_connection()
     cursor = connection.cursor()
 
-    #TODO
     if body:
         try:
-            query = 'INSERT INTO dbo.users_doors (user_id, door_id) VALUES (?, ?);'
-            validated_params = validate(body["door"], FIELDS)
+            query = 'DELETE FROM dbo.users_doors WHERE user_id=? and door_id=?;'
+            validated = validate(body, FIELDS)
+            params = (validated["user_id"], validated["door_id"])
 
-            cursor.execute(query, validated_params)
+            cursor.execute(query, params)
             connection.commit()
 
-            return func.HttpResponse(f"User-Door record created successfully.")
+            return func.HttpResponse(f"User-Door record removed successfully.")
 
         except Exception as e:
             logging.error(e)
@@ -34,4 +36,3 @@ def assign_door_to_user(body):
             "Bad data",
             status_code=400
     )
-
