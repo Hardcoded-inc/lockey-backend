@@ -5,7 +5,7 @@ import json
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Get all doors function processed a request.')
+    logging.info('Get available doors for user function processed a request.')
     id = req.route_params.get('id')
 
     user = db.query_one('SELECT * FROM dbo.users WHERE id = ?', id)
