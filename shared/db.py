@@ -1,5 +1,6 @@
 import pyodbc
 import os
+import logging
 
 def get_connection():
     # Set up connection to SQL database
@@ -17,3 +18,25 @@ def get_connection():
                         'PWD='+ password
 
     return pyodbc.connect(connection_string)
+
+
+def query_all(query_str, params=None):
+    cursor = query(query_str, params)
+    return [dict(zip([column[0] for column in cursor.description], row))
+             for row in cursor.fetchall()]
+
+def query_one(query_str, params=None):
+    cursor = query(query_str, params)
+    return dict(zip([column[0] for column in cursor.description], cursor.fetchone()))
+
+
+def query(query_str, params):
+    conn = get_connection();
+    cursor = conn.cursor();
+
+    if(params):
+        cursor.execute(query_str, params)
+    else:
+        cursor.execute(query_str)
+
+    return cursor

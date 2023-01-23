@@ -25,6 +25,6 @@ def close_door(id: int) -> func.HttpResponse:
 
     connection.commit()
 
-    return func.HttpResponse(true)
+    return func.HttpResponse("true")
 
 

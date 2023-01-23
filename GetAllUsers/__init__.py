@@ -7,7 +7,7 @@ import json
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    users = query('SELECT u.id, u.username, u.is_admin FROM users u')
+    users = db.query_all('SELECT u.id, u.username, u.is_admin FROM users u')
 #
 #
 #     cursor.execute(
@@ -19,13 +19,3 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 #     users = cursor.fetchall()
 
     return func.HttpResponse(json.dumps(users, default=str), mimetype="application/json")
-
-
-
-
-def query(query, params=None):
-    conn = db.get_connection();
-    cursor = conn.cursor();
-    cursor.execute(query)
-    return [dict(zip([column[0] for column in cursor.description], row))
-             for row in cursor.fetchall()]

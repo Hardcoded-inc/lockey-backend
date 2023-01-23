@@ -17,20 +17,30 @@ def open_door(id: int) -> func.HttpResponse:
     connection = db.get_connection()
     cursor = connection.cursor()
 
-    cursor.execute('SELECT is_open FROM doors WHERE id = ?', id)
-    door = cursor.fetchone() # returns not dict, but tuple: (is_open, )... ಠ_ಠ
+    door = db.query_one('SELECT * FROM dbo.doors WHERE id = ?', id)
 
     if door == None:
         return func.HttpResponse("Not found", status_code=404)
 
-    elif not door[0]:
-        cursor.execute('UPDATE dbo.doors SET is_open = \'True\' WHERE id = ?', id)
-        connection.commit()
-        # TODO: Set timer and lock door again after 10 sek or sth (good idea)
-        return func.HttpResponse(true, status_code=200)
+    cursor.execute(
+        'UPDATE dbo.doors SET is_open = \'True\''
+        'WHERE id = ?',
+        id
+    )
 
-    else:
-        return func.HttpResponse(f"Door is already open.")
+    connection.commit()
+    return func.HttpResponse("true", status_code=200)
+
+
+#     elif not door["is_open"]:
+#         cursor.execute('UPDATE dbo.doors SET is_open = \'True\' WHERE id = ?', id)
+#         connection.commit()
+#         # TODO: Set timer and lock door again after 10 sek or sth (good idea)
+#         return func.HttpResponse(True, status_code=200)
+#
+#     else:
+#         return func.HttpResponse(f"Door is already open.", status_code=200)
+#
 
 
 
