@@ -5,7 +5,7 @@ import azure.functions as func
 import json
 
 
-FIELDS = {"name"}
+FIELDS = {"name", "long", "lat"}
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Create Door function processed a request.")
