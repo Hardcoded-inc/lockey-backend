@@ -3,7 +3,7 @@ from shared import db
 import json
 import azure.functions as func
 
-UPDATEABLE_COLUMNS = ['name']
+UPDATEABLE_COLUMNS = ['name', "long", "lat"]
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Update door function processed a request.')
