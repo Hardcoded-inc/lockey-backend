@@ -27,7 +27,12 @@ def query_all(query_str, params=None):
 
 def query_one(query_str, params=None):
     cursor = query(query_str, params)
-    return dict(zip([column[0] for column in cursor.description], cursor.fetchone()))
+    res = cursor.fetchone()
+
+    if res:
+        return dict(zip([column[0] for column in cursor.description], res))
+
+    return None
 
 
 def query(query_str, params):
