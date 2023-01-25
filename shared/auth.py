@@ -10,7 +10,7 @@ class AuthLevels(Enum):
     ADMIN = 2
 
 
-def auth(req, auth_level):
+def auth(req, auth_level=AuthLevels.GUEST):
     token = req.headers.get("Bareer")
     auth_data = jwt.decode(token)
     # logging.warn(auth_data)
