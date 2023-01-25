@@ -2,14 +2,18 @@ import logging
 from shared import db
 import json
 import azure.functions as func
+from shared.auth import auth, AuthLevels
+
 
 UPDATEABLE_COLUMNS = ['name', "long", "lat"]
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Update door function processed a request.')
+    return auth(req, lambda d: update_door(req), AuthLevels.ADMIN)
 
+
+
+def update_door(req):
     id = req.route_params.get('id')
-
     conn = db.get_connection()
     cursor = conn.cursor()
 

@@ -8,14 +8,11 @@ import bcrypt
 JWT_TTL = 300 #sec
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python LogIn function processed a request.')
     domain = req.url.split("/")[2]
-
     return log_in_user(req.get_json(), domain)
 
 
 def log_in_user(body: bytes, domain: str) -> func.HttpResponse:
-
     # 1. Get username
     username = body.get("username") or ""
     passwd = body.get("password") or ""

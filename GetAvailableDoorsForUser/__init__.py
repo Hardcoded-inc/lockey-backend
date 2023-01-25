@@ -2,12 +2,17 @@ import logging
 from shared import db
 import azure.functions as func
 import json
+from shared.auth import auth, AuthLevels
+
+
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Get available doors for user function processed a request.')
     id = req.route_params.get('id')
+    return auth(req, lambda d: get_available_doors_for_user(id), AuthLevels.ADMIN)
 
+
+def get_available_doors_for_user(id):
     user = db.query_one('SELECT * FROM dbo.users WHERE id = ?', id)
 
     if (not user):

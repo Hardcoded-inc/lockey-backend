@@ -8,7 +8,6 @@ from shared.auth import auth, AuthLevels
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     id = req.route_params.get('id')
-    logging.info(f"Delete User (id: {id}) function processed a request.")
 
     return auth(req, lambda d: delete_user(id), AuthLevels.ADMIN)
 

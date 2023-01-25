@@ -7,8 +7,6 @@ import json
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     id = req.route_params.get('id')
-    logging.info(f"Door (id: {id} ) function processed a request.")
-
     return open_door(id)
 
 

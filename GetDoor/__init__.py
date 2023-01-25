@@ -5,8 +5,6 @@ import json
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Get Door function processed a request.')
-
     id = req.route_params.get('id')
     door = db.query_one('SELECT * FROM dbo.doors WHERE id = ?', id)
 

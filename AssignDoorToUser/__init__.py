@@ -3,14 +3,14 @@ from shared import db
 from shared.validate import validate
 import azure.functions as func
 import json
+from shared.auth import auth, AuthLevels
+
 
 
 FIELDS = {"user_id", "door_id"}
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python AssignDoorToUser function processed a request.')
-
-    return assign_door_to_user(req.get_json())
+    return auth(req, lambda d: assign_door_to_user(req.get_json()), AuthLevels.ADMIN)
 
 
 def assign_door_to_user(body):
