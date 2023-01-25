@@ -3,30 +3,36 @@ from shared import db
 from shared.validate import validate
 import azure.functions as func
 import json
+from shared.auth import auth, AuthLevels
+
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     id = req.route_params.get('id')
-    return open_door(id)
+    return auth(req, lambda d: open_door(id, d), AuthLevels.USER)
 
 
 
-def open_door(id: int) -> func.HttpResponse:
+
+def open_door(id: int, auth_data) -> func.HttpResponse:
     connection = db.get_connection()
     cursor = connection.cursor()
 
-    door = db.query_one('SELECT * FROM dbo.doors WHERE id = ?', id)
+    query_str ="SELECT * from doors d LEFT JOIN users_doors ud ON d.id = ud.door_id  WHERE d.id = ? AND ud.user_id = ?"
+    door = db.query_one(query_str, (id, auth_data["id"]))
 
     if door == None:
-        return func.HttpResponse("Not found", status_code=404)
+        return func.HttpResponse("Unauthorized", status_code=403)
 
-    cursor.execute(
-        'UPDATE dbo.doors SET is_open = \'True\''
-        'WHERE id = ?',
-        id
-    )
+    if(door):
+        cursor.execute(
+            'UPDATE dbo.doors SET is_open = \'True\''
+            'WHERE id = ?',
+            door["id"]
+        )
 
-    connection.commit()
+        connection.commit()
+
     return func.HttpResponse("true", status_code=200)
 
 
