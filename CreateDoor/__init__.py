@@ -19,9 +19,9 @@ def create_door(body: bytes) -> func.HttpResponse:
 
     if body:
         try:
-            query = 'INSERT INTO dbo.doors (name) VALUES (?);'
+            query = 'INSERT INTO dbo.doors (name, long, lat) VALUES (?, ?, ?);'
             validated = validate(body["door"], FIELDS)
-            params = (validated["name"])
+            params = (validated["name"], validated["long"], validated["lat"])
 
             cursor.execute(query, params)
             connection.commit()
