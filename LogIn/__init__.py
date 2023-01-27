@@ -16,6 +16,8 @@ def log_in_user(body: bytes, domain: str) -> func.HttpResponse:
     # 1. Get username
     username = body.get("username") or ""
     passwd = body.get("password") or ""
+    
+    logging.warn(username)
     logging.warn(passwd)
 
 
@@ -40,4 +42,4 @@ def log_in_user(body: bytes, domain: str) -> func.HttpResponse:
 
     # 5. Set jwt cookie
     jwt_cookie = cookie.gen(domain, JWT_TTL, "jwt", token)
-    return func.HttpResponse(body=json.dumps({"jwt": token}), status_code=200, headers=jwt_cookie, mimetype="application/json")
+    return func.HttpResponse(body=json.dumps({"jwt": token, "is_admin": user["is_admin"]}), status_code=200, headers=jwt_cookie, mimetype="application/json")
