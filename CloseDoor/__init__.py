@@ -1,5 +1,5 @@
 import logging
-from shared import db
+from shared import db, web_pub_sub as wps
 from shared.validate import validate
 import azure.functions as func
 import json
@@ -17,21 +17,16 @@ def close_door(id: int, auth_data) -> func.HttpResponse:
     connection = db.get_connection()
     cursor = connection.cursor()
 
-    query_str ="SELECT * from doors d LEFT JOIN users_doors ud ON d.id = ud.door_id  WHERE d.id = ? AND ud.user_id = ?"
-    door = db.query_one(query_str, (id, auth_data["id"]))
+    
+    cursor.execute(
+        'UPDATE dbo.doors SET is_open = \'False\''
+        'WHERE id = ?',
+        id
+    )
 
-    if door == None:
-        return func.HttpResponse("Unauthorized", status_code=403)
+    connection.commit()
 
-    if(door):
-        cursor.execute(
-            'UPDATE dbo.doors SET is_open = \'False\''
-            'WHERE id = ?',
-            door["id"]
-        )
-
-        connection.commit()
-
+    wps.publish_message_on_doors_update(auth_data)
     return func.HttpResponse("true")
 
 

@@ -29,7 +29,8 @@ def create_user(body: bytes) -> func.HttpResponse:
         )
         connection.commit()
         return func.HttpResponse(f"User created successfully.")
-
+    
+    return func.HttpResponse(f"Bad user data", status_code=400)
 
 def parse_user_data(body: bytes) -> Optional[dict]:
     try:
@@ -42,7 +43,6 @@ def parse_user_data(body: bytes) -> Optional[dict]:
 def validate_user_data(body_dict: dict) -> Optional[dict]:
     if ("user" in body_dict):
         user = body_dict["user"]
-        logging.warning(user)
 
         if (USER_FIELDS <= user.keys()):
             return user;

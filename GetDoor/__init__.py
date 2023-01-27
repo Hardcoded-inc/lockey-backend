@@ -12,9 +12,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 
 
-def get_door(id, d):
-    query_str ="SELECT * from doors d LEFT JOIN users_doors ud ON d.id = ud.door_id  WHERE d.id = ? AND ud.user_id = ?"
-    door = db.query_one(query_str, (id, auth_data["id"]))
+def get_door(id, auth_data):
+    query_str ="SELECT * from doors d LEFT JOIN users_doors ud ON d.id = ud.door_id  WHERE d.id = ?"
+    door = db.query_one(query_str, id)
 
     if (not door):
         return func.HttpResponse(json.dumps({"error": "Door not found"}), status_code=404, mimetype="application/json")
