@@ -2,11 +2,14 @@ import logging
 from shared import db
 import azure.functions as func
 import json
+from shared.auth import auth, AuthLevels
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    return auth(req, lambda d: get_all_users(), AuthLevels.ADMIN)
 
+
+def get_all_users():
     users = db.query_all('SELECT u.id, u.username, ud.door_id FROM users u LEFT JOIN users_doors ud ON u.id = ud.user_id')
     users_with_doors = list(filter(lambda u: u["door_id"], users))
     users_without_doors = list(filter(lambda u: not u["door_id"], users))

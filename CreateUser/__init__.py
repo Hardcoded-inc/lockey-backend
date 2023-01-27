@@ -4,14 +4,13 @@ import azure.functions as func
 import json
 from typing import Optional
 import bcrypt
+from shared.auth import auth, AuthLevels
 
 
 USER_FIELDS = {"username", "password", "is_admin"}
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Python HTTP trigger function processed a request.")
-
-    return create_user(req.get_body())
+    return auth(req, lambda d: create_user(req.get_body()), AuthLevels.ADMIN)
 
 def create_user(body: bytes) -> func.HttpResponse:
     connection = db.get_connection()
@@ -30,7 +29,7 @@ def create_user(body: bytes) -> func.HttpResponse:
         )
         connection.commit()
         return func.HttpResponse(f"User created successfully.")
-       
+
 
 def parse_user_data(body: bytes) -> Optional[dict]:
     try:
