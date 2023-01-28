@@ -12,7 +12,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     id = req.route_params.get('id')
     body = json.loads(req.get_body())
 
-    if (body['delay']):
+    if ('delay' in body):
         time.sleep(body['delay'])
         
     return auth(req, lambda d: close_door(id, d), AuthLevels.USER)
