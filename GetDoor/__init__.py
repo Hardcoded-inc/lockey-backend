@@ -13,10 +13,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 
 def get_door(id, auth_data):
-    query_str ="SELECT * from doors d LEFT JOIN users_doors ud ON d.id = ud.door_id  WHERE d.id = ?"
-    door = db.query_one(query_str, id)
+    doors = db.query_one("SELECT d.* from doors d LEFT JOIN users_doors ud ON d.id = ud.door_id  WHERE d.id = ?", id)
 
-    if (not door):
+    if (not doors):
         return func.HttpResponse(json.dumps({"error": "Door not found"}), status_code=404, mimetype="application/json")
 
-    return func.HttpResponse(json.dumps(door, default=str), mimetype="application/json")
+    users = db.query_all("SELECT ID, username, is_admin FROM users u LEFT JOIN users_doors ud ON u.id = ud.user_id WHERE ud.door_id = ?", id)
+    doors['users'] = users
+
+    return func.HttpResponse(json.dumps(doors, default=str), mimetype="application/json")
