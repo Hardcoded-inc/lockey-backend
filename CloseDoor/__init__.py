@@ -4,11 +4,17 @@ from shared.validate import validate
 import azure.functions as func
 import json
 from shared.auth import auth, AuthLevels
+import time
 
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     id = req.route_params.get('id')
+    body = json.loads(req.get_body())
+
+    if (body['delay']):
+        time.sleep(body['delay'])
+        
     return auth(req, lambda d: close_door(id, d), AuthLevels.USER)
 
 
