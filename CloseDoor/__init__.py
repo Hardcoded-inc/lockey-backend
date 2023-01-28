@@ -32,7 +32,7 @@ def close_door(id: int, auth_data) -> func.HttpResponse:
 
     connection.commit()
 
-    wps.publish_message_on_doors_update(auth_data)
+    wps.notfiy_connected_clients('doors')
     return func.HttpResponse("true")
 
 

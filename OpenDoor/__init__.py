@@ -31,7 +31,7 @@ def open_door(id: int, auth_data, headers) -> func.HttpResponse:
     connection.commit()
 
     start_delayed_close_door(id, headers)
-    wps.publish_message_on_doors_update(auth_data)
+    wps.notfiy_connected_clients('doors')
 
     return func.HttpResponse("true", status_code=200)
 
