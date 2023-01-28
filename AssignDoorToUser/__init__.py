@@ -1,5 +1,5 @@
 import logging
-from shared import db
+from shared import db, web_pub_sub as wps
 from shared.validate import validate
 import azure.functions as func
 import json
@@ -25,6 +25,8 @@ def assign_door_to_user(body):
 
             cursor.execute(query, params)
             connection.commit()
+
+            wps.notfiy_connected_clients('doors')
 
             return func.HttpResponse(f"User-Door record created successfully.")
 

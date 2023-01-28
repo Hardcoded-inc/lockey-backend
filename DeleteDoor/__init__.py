@@ -1,5 +1,5 @@
 import logging
-from shared import db, context
+from shared import db, context, web_pub_sub as wps
 import azure.functions as func
 import json
 from shared.auth import auth, AuthLevels
@@ -17,5 +17,7 @@ def delete_door(id: int) -> func.HttpResponse:
     cursor.execute('DELETE FROM doors WHERE id = ?', id)
 
     connection.commit()
+
+    wps.notfiy_connected_clients('doors')
 
     return func.HttpResponse(f"Door deleted successfully.")
