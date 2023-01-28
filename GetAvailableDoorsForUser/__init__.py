@@ -13,7 +13,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 
 def get_available_doors_for_user(id):
-    user = db.query_one('SELECT * FROM dbo.users WHERE id = ?', id)
+    user = db.query_one('SELECT ID, username, is_admin FROM dbo.users WHERE id = ?', id)
 
     if (not user):
         return func.HttpResponse(json.dumps({"error": "User not found"}), status_code=404, mimetype="application/json")
